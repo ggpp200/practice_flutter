@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,16 +16,11 @@ class MyApp extends StatefulWidget {
 //(마이앱을 상속받아 기본구성하는 틀)
 class _MyAppState extends State<MyApp> {
   int selectedPage = 0;
-  final _pageList = [const HomePage(), const NewPage()];
+  final _pageList = [const HomePage(), const NewPage(), const CalendarPage()];
 
-  void _changePage() {
+  void _changePage(idx) {
     setState(() {
-      if (selectedPage == 0) {
-        selectedPage = 1;
-      } else {
-        selectedPage = 0;
-        print(selectedPage);
-      }
+      selectedPage = idx;
     });
   }
 
@@ -33,15 +28,52 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // return MaterialApp(home: Center(child: Image.asset('assets/test.png')));
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text('start'),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('start'),
+        ),
+        body: _pageList[selectedPage],
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              IconButton(
+                tooltip: 'Open popup menu',
+                icon: const Icon(Icons.event_note),
+                onPressed: () {
+                  _changePage(0);
+                },
+              ),
+              IconButton(
+                tooltip: 'Search',
+                icon: const Icon(Icons.query_stats),
+                onPressed: () {
+                  _changePage(1);
+                },
+              ),
+              Container(
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red, width: 3)),
+                child: const Text('asdf'),
+              ),
+              IconButton(
+                tooltip: 'Favorite',
+                icon: const Icon(Icons.calendar_month),
+                onPressed: () {
+                  _changePage(2);
+                },
+              ),
+              IconButton(
+                tooltip: 'Favorite',
+                icon: const Icon(Icons.person),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
       ),
-      body: _pageList[selectedPage],
-      bottomNavigationBar: Navigation(
-        changePage: _changePage,
-      ),
-    ));
+    );
   }
 }
 
@@ -83,55 +115,15 @@ class NewPage extends StatelessWidget {
   }
 }
 
-// 내비게이션 상태
-class Navigation extends StatefulWidget {
-  const Navigation({super.key, required changePage});
-
-  final Function() changePage;
-
-  @override
-  State<Navigation> createState() => _NavigationState();
-}
-
-class _NavigationState extends State<Navigation> {
+// (달력 페이지)
+class CalendarPage extends StatelessWidget {
+  const CalendarPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          IconButton(
-            tooltip: 'Open popup menu',
-            icon: const Icon(Icons.event_note),
-            onPressed: () {
-              widget.changePage();
-            },
-          ),
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.query_stats),
-            onPressed: () {
-              widget.changePage();
-            },
-          ),
-          Container(
-            height: double.infinity,
-            decoration:
-                BoxDecoration(border: Border.all(color: Colors.red, width: 3)),
-            child: const Text('asdf'),
-          ),
-          IconButton(
-            tooltip: 'Favorite',
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'Favorite',
-            icon: const Icon(Icons.person),
-            onPressed: () {},
-          ),
-        ],
-      ),
+    return TableCalendar(
+      firstDay: DateTime.utc(2021, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: DateTime.now(),
     );
   }
 }
