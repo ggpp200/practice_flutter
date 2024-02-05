@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:project/widgets/payment_list.dart';
+import 'package:project/utils/kakao_certification.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:project/utils/keys.dart';
 
 void main() {
+  debugPrint(myKeys['nativeAppKey']);
+  kakaoInit();
   runApp(const MyApp());
 }
 
@@ -101,17 +106,13 @@ class NewPage extends StatelessWidget {
   const NewPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Image.asset('assets/mainIcon.png'),
-          const Text(
-            "가계부 새쌋",
-            style: TextStyle(fontSize: 40),
-          )
-        ],
-      ),
-    );
+    return Container(
+        width: double.infinity,
+        decoration:
+            BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
+        child: const Column(
+          children: [DateList(), PaymentList()],
+        ));
   }
 }
 
