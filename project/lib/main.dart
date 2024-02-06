@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:project/widgets/payment_list.dart';
 import 'package:project/utils/kakao_certification.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:project/utils/keys.dart';
 
 void main() {
-  debugPrint(myKeys['nativeAppKey']);
   kakaoInit();
   runApp(const MyApp());
 }
@@ -94,7 +93,8 @@ class HomePage extends StatelessWidget {
           const Text(
             "새싹 가계부",
             style: TextStyle(fontSize: 40),
-          )
+          ),
+          const LoginButton()
         ],
       ),
     );
