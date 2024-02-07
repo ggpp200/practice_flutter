@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:project/widgets/payment_list.dart';
 import 'package:project/utils/kakao_certification.dart';
-import 'package:project/utils/keys.dart';
 
 void main() {
   kakaoInit();

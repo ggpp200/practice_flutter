@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:project/utils/keys.dart';
-import 'package:project/utils/social_login.dart';
-import 'package:flutter/services.dart';
-import 'package:project/utils/main_view_model.dart';
 
 void kakaoInit() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,43 +16,33 @@ void kakaoInit() async {
   }
 }
 
-class KakaoLogin implements SocialLogin {
-  @override
-  Future<bool> login() async {
+void kakaoLogin() async {
+  if (await isKakaoTalkInstalled()) {
     try {
-      bool isInstalled = await isKakaoTalkInstalled(); //카카오톡 설치 확인
-      if (isInstalled) {
-        //설치되어 있다면
-        try {
-          //카카오톡 로그인 시도
-          await UserApi.instance.loginWithKakaoTalk(); //카카오톡 로그인
-          return true; //성공하면 true
-        } catch (error) {
-          //error 발견하면
-          return false; //return false
-        }
-      } else {
-        //카카오톡 설치되어 있지 않다면
-        try {
-          //카카오톡 계정으로 로그인 시도
-          await UserApi.instance.loginWithKakaoAccount(); //카카오톡 계정 로그인
-          return true; //성공하면 true
-        } catch (error) {
-          //error 발견하면
-          return false; //return false
-        }
-      }
+      await UserApi.instance.loginWithKakaoTalk();
+      debugPrint('카카오톡으로 로그인 성공');
     } catch (error) {
-      return false;
-    }
-  }
+      debugPrint('카카오톡으로 로그인 실패 $error');
 
-  @override
-  Future<bool> logout() async {
+      // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
+      // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+      if (error is PlatformException && error.code == 'CANCELED') {
+        return;
+      }
+      // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
+      try {
+        await UserApi.instance.loginWithKakaoAccount();
+        debugPrint('카카오계정으로 로그인 성공');
+      } catch (error) {
+        debugPrint('카카오계정으로 로그인 실패 $error');
+      }
+    }
+  } else {
     try {
-      return true;
+      await UserApi.instance.loginWithKakaoAccount();
+      debugPrint('카카오계정으로 로그인 성공');
     } catch (error) {
-      return false;
+      debugPrint('카카오계정으로 로그인 실패 $error');
     }
   }
 }
@@ -68,15 +55,13 @@ class LoginButton extends StatefulWidget {
 }
 
 class _LoginButtonState extends State<LoginButton> {
-  final viewmodel = MainViewModel(KakaoLogin());
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       child: Image.asset('assets/kakao_login_medium_narrow.png'),
-      onPressed: () async {
-        await viewmodel.login();
-        print(myKeys['nativeAppKey']);
+      onPressed: () {
+        kakaoLogin();
+        debugPrint(myKeys['nativeAppKey']);
       },
     );
   }
