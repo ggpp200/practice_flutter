@@ -110,6 +110,7 @@ class NewPage extends StatelessWidget {
         decoration:
             BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
         child: const Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [DateList(), PaymentList()],
         ));
   }
